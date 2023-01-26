@@ -12,13 +12,6 @@ cpac new <projectname>
 
 ## Installation
 
-CREATE INSTALL SCRIPT THAT ONE CAN curl installscript | sh
-
 ```bash
-
+curl https://raw.githubusercontent.com/salomaestro/cpac/main/cpac_install.sh | sh
 ```
-
-```bash
-PATH=$PATH:/home/$(USER)/.cpac/bin
-```
-
