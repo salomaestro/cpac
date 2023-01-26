@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+from pathlib import Path
+import os
+from shutil import copy2
+
+def generate_makefile(project_path, template_dir):
+    template_makefile = template_dir / "Makefile"
+
+    with open(template_makefile, "r") as rf:
+
+        buf = list()
+
+        for line in rf.readlines():
+            if "projectname" in line:
+                line = line.replace("projectname", project_path.name)
+
+            buf.append(line)
+
+    with open(project_path / "Makefile", "w+") as wt:
+
+        wt.writelines(buf)
+
+def git_init(path):
+    os.system(f"cd {path} && git init && git checkout -b main")
+
+def hello_world(path_src, template_dir):
+    copy2(template_dir / "main.c", path_src / "main.c")
+
+
+def create_project(name, path):
+    opts = {"parents": True, "exist_ok": True}
+    project_dir = path / name
+    include_dir = project_dir / "include"
+    src_dir = project_dir / "src"
+    target_dir = project_dir / "target"
+    template_dir = Path(__file__).parents[1] / "template"
+
+    project_dir.mkdir(**opts)
+    print(f"[+] {project_dir}")
+    include_dir.mkdir(**opts)
+    print(f"[+] {include_dir}")
+    src_dir.mkdir(**opts)
+    print(f"[+] {src_dir}")
+    target_dir.mkdir(**opts)
+    print(f"[+] {target_dir}")
+
+    generate_makefile(project_dir, template_dir)
+    print(f"[+] Makefile")
+
+    hello_world(src_dir, template_dir)
+
+    git_init(project_dir)
+
+    copy2(template_dir / ".gitignore", project_dir / ".gitignore")
+    return
+
+
+# def run_project():
+#     cwd = Path().absolute()
+#     target_dir = cwd / "target"
+
+#     # build
+#     os.system(f"cd {cwd} && make")
+
+#     # run
+
+
+def parse():
+    parser = ArgumentParser("Quickly create a C project, compile or run.")
+
+    parser.add_argument("-v", "--verbose")
+
+    subparsers = parser.add_subparsers(help="Sub parsers")
+
+    new = subparsers.add_parser("new", help="Create a new project")
+    new.add_argument("new_name", action="store", help="Project name.")
+    new.set_defaults(do=create_project)
+
+    # run = subparsers.add_parser("run", help="Build and run main.c")
+    # run.set_defaults(do=run_project)
+
+    return parser
+
+if __name__ == "__main__":
+    path = Path().absolute()
+    parser = parse()
+
+    args = parser.parse_args()
+
+    args.do(args.new_name, path)
