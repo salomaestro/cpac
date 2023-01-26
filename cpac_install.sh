@@ -1,14 +1,21 @@
 #!/bin/bash
 
+DEST=~/.cpac
+
 # Download latest release and put in user home dir.
 wget https://github.com/salomaestro/cpac/archive/refs/tags/latest.tar.gz -O ~/Downloads/cpac.tar.gz 
 
 # Create destination directory
-mkdir ~/.cpac
+if [[ ! -d "$DEST" ]]
+then 
+    mkdir ~/.cpac
+fi
 
 # Extract downloaded tar to 
 tar -xzvf ~/Downloads/cpac.tar.gz -C ~/.cpac
 
+# Remove tar file
 rm ~/Downloads/cpac.tar.gz
 
-ln -s /home/$(USER)/.cpac/cpac-latest/bin/cpac /usr/bin/cpac
+# Create a symbolic link from source code to local bin
+ln -s ~/.cpac/cpac-latest/bin/cpac /usr/local/bin/cpac
