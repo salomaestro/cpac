@@ -6,6 +6,12 @@ Greatly inspired by rust's all-in-one package manager [Cargo](https://github.com
 
 Quickly generate structure for new C project with makefile, git initialization, setting up src, include and target directories.
 
+## Installation
+
+```bash
+curl https://raw.githubusercontent.com/salomaestro/cpac/main/cpac_install.sh | sh
+```
+
 ## Usage
 
 ```bash
@@ -27,10 +33,4 @@ myproject
 └── target
 
 5 directories, 3 files
-```
-
-## Installation
-
-```bash
-curl https://raw.githubusercontent.com/salomaestro/cpac/main/cpac_install.sh | sh
 ```
