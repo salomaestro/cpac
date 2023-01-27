@@ -18,4 +18,4 @@ tar -xzvf ~/Downloads/cpac.tar.gz -C ~/.cpac
 rm ~/Downloads/cpac.tar.gz
 
 # Create a symbolic link from source code to local bin
-ln -s ~/.cpac/cpac-latest/bin/cpac /usr/local/bin/cpac
+ln -sf ~/.cpac/cpac-latest/bin/cpac /usr/local/bin/cpac
