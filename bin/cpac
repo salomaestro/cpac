@@ -42,7 +42,7 @@ def create_project(name, path):
 
     src_dir = project_dir / "src"
     target_dir = project_dir / "target"
-    template_dir = Path(__file__).parents[1] / "template"
+    template_dir = Path.home() / ".cpac" / "cpac-latest" / "template"
 
     logging.debug(f"Template dir: {template_dir}")
 
