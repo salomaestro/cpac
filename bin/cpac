@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import os
 from shutil import copy2
+import logging
 
 def generate_makefile(project_path, template_dir):
     template_makefile = template_dir / "Makefile"
@@ -12,42 +13,53 @@ def generate_makefile(project_path, template_dir):
 
         buf = list()
 
-        for line in rf.readlines():
+        for i, line in enumerate(rf.readlines(), start=1):
             if "projectname" in line:
                 line = line.replace("projectname", project_path.name)
+                logging.debug(f"Inserted {project_path.name} in Makefile line {i}")
 
             buf.append(line)
 
     with open(project_path / "Makefile", "w+") as wt:
 
         wt.writelines(buf)
+        logging.debug(f"Wrote changes in Makefile to {project_path / 'Makefile'}")
 
 def git_init(path):
     os.system(f"cd {path} && git init && git checkout -b main")
 
 def hello_world(path_src, template_dir):
     copy2(template_dir / "main.c", path_src / "main.c")
-
+    logging.info(f"Copied {template_dir / 'main.c'} to {path_src / 'main.c'}")
 
 def create_project(name, path):
     opts = {"parents": True, "exist_ok": True}
     project_dir = path / name
+    
+    logging.debug(f"Project dir: {project_dir}")
+
     include_dir = project_dir / "include"
+
     src_dir = project_dir / "src"
     target_dir = project_dir / "target"
     template_dir = Path(__file__).parents[1] / "template"
 
+    logging.debug(f"Template dir: {template_dir}")
+
     project_dir.mkdir(**opts)
-    print(f"[+] {project_dir}")
+    logging.info(f"Created {project_dir}")
+
     include_dir.mkdir(**opts)
-    print(f"[+] {include_dir}")
+    logging.info(f"Created {include_dir}")
+
     src_dir.mkdir(**opts)
-    print(f"[+] {src_dir}")
+    logging.info(f"Created {src_dir}")
+
     target_dir.mkdir(**opts)
-    print(f"[+] {target_dir}")
+    logging.info(f"Created {src_dir}")
 
     generate_makefile(project_dir, template_dir)
-    print(f"[+] Makefile")
+    logging.info(f"Created Makefile")
 
     hello_world(src_dir, template_dir)
 
@@ -70,9 +82,10 @@ def create_project(name, path):
 def parse():
     parser = ArgumentParser("Quickly create a C project, compile or run.")
 
-    parser.add_argument("-v", "--verbose")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-vv", "--very-verbose", action="store_true")
 
-    subparsers = parser.add_subparsers(help="Sub parsers")
+    subparsers = parser.add_subparsers(help="Commands", dest="command")
 
     new = subparsers.add_parser("new", help="Create a new project")
     new.add_argument("new_name", action="store", help="Project name.")
@@ -84,9 +97,20 @@ def parse():
     return parser
 
 if __name__ == "__main__":
+    loglevel = logging.WARNING
     path = Path().absolute()
     parser = parse()
 
     args = parser.parse_args()
 
-    args.do(args.new_name, path)
+    if args.verbose:
+        loglevel = logging.INFO
+
+    if args.very_verbose:
+        loglevel = logging.DEBUG
+
+    logging.basicConfig(format="%(levelname)s:%(message)s", level=loglevel)
+
+    if args.command:
+        logging.debug(f"Command: {args.command}, name: {args.new_name}")
+        args.do(args.new_name, path)
