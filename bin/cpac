@@ -35,13 +35,12 @@ def insert_files(path_src, template_dir):
     copy2(template_dir / "main.c", path_src / "main.c")
     copy2(template_dir / "compile_flags.txt", path_src / "compile_flags.txt")
     logging.info(f"Copied {template_dir / 'main.c'} to {path_src / 'main.c'}")
-    logging.info(f"Copied {template_dir / "compile_flags.txt"} to {path_src / "compile_flags.txt"}")
+    logging.info(f"Copied {template_dir / 'compile_flags.txt'} to {path_src / 'compile_flags.txt'}")
 
 
 def create_project(name, path):
     opts = {"parents": True, "exist_ok": True}
     project_dir = path / name
-    
     logging.debug(f"Project dir: {project_dir}")
 
     include_dir = project_dir / "include"
