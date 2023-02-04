@@ -6,6 +6,7 @@ import os
 from shutil import copy2
 import logging
 
+
 def generate_makefile(project_path, template_dir):
     template_makefile = template_dir / "Makefile"
 
@@ -25,12 +26,17 @@ def generate_makefile(project_path, template_dir):
         wt.writelines(buf)
         logging.debug(f"Wrote changes in Makefile to {project_path / 'Makefile'}")
 
+
 def git_init(path):
     os.system(f"cd {path} && git init && git checkout -b main")
 
-def hello_world(path_src, template_dir):
+
+def insert_files(path_src, template_dir):
     copy2(template_dir / "main.c", path_src / "main.c")
+    copy2(template_dir / "compile_flags.txt", path_src / "compile_flags.txt")
     logging.info(f"Copied {template_dir / 'main.c'} to {path_src / 'main.c'}")
+    logging.info(f"Copied {template_dir / "compile_flags.txt"} to {path_src / "compile_flags.txt"}")
+
 
 def create_project(name, path):
     opts = {"parents": True, "exist_ok": True}
@@ -59,9 +65,9 @@ def create_project(name, path):
     logging.info(f"Created {src_dir}")
 
     generate_makefile(project_dir, template_dir)
-    logging.info(f"Created Makefile")
+    logging.info("Created Makefile")
 
-    hello_world(src_dir, template_dir)
+    insert_files(src_dir, template_dir)
 
     git_init(project_dir)
 
@@ -95,6 +101,7 @@ def parse():
     # run.set_defaults(do=run_project)
 
     return parser
+
 
 if __name__ == "__main__":
     loglevel = logging.WARNING
