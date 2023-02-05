@@ -33,7 +33,7 @@ def git_init(path):
 
 def insert_files(path_src, template_dir):
     copy2(template_dir / "main.c", path_src / "main.c")
-    copy2(template_dir / "compile_flags.txt", path_src / "compile_flags.txt")
+    copy2(template_dir / "compile_flags.txt", path_src / ".." / "compile_flags.txt")
     logging.info(f"Copied {template_dir / 'main.c'} to {path_src / 'main.c'}")
     logging.info(f"Copied {template_dir / 'compile_flags.txt'} to {path_src / 'compile_flags.txt'}")
 
